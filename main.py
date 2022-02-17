@@ -1,6 +1,10 @@
 import mouse
+import time
 
 def mouseHandler(event):
-    print(event)
+    if isinstance(event, mouse.MoveEvent):
+        print(event)
 
 mouse.hook(mouseHandler)
+
+time.sleep(120)
