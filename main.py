@@ -3,6 +3,7 @@ import time
 import win32gui, win32process, psutil
 from pathlib import Path
 import os
+import threading
 
 curr_dir = Path(__file__).parent
 
@@ -16,10 +17,15 @@ from pydub.playback import play
 idle_warning_sound_path = curr_dir.joinpath('sfx/NaviHeyListen.mp3')
 idle_warning_sound = AudioSegment.from_mp3(str(idle_warning_sound_path))
 
+IDLE_WARNING_SECONDS = 5
+
+timer = None
+
 def do_idle_warning():
+    global timer
     print('warning, idle for too long!')
     play(idle_warning_sound)
-    # stop timer
+    timer = None
 
 def active_window_process_name():
     try:
@@ -33,14 +39,18 @@ def is_runescape_active():
     return active_process == 'rs2client.exe'
 
 def mouseHandler(event):
+    global timer
     if isinstance(event, mouse.MoveEvent):
         if not is_runescape_active():
+            # runescape window not active, not resetting timer
             return
-        print('TODO reset timer')
+        if timer is not None:
+            timer.cancel()
+        timer = threading.Timer(IDLE_WARNING_SECONDS, do_idle_warning)
+        timer.start()
         
 
-#mouse.hook(mouseHandler)
+mouse.hook(mouseHandler)
 
-#time.sleep(120)
-
-do_idle_warning()
+while True:
+    time.sleep(60)
