@@ -17,7 +17,7 @@ from pydub.playback import play
 idle_warning_sound_path = curr_dir.joinpath('sfx/NaviHeyListen.mp3')
 idle_warning_sound = AudioSegment.from_mp3(str(idle_warning_sound_path))
 
-IDLE_WARNING_SECONDS = 5
+IDLE_WARNING_SECONDS = 270
 
 timer = None
 
